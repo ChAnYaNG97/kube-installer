@@ -41,7 +41,7 @@ kube_virt_version="train"
 version="1.9.0"
 cloud_arch="amd64"
 edge_arch="arm64"
-
+cloud_ip="133.133.135.12"
 
 ########    Advanced setting       ########
 centos_docker_ce_url="https://download.docker.com/linux/centos/\$releasever/\$basearch/stable"
@@ -621,7 +621,7 @@ function init-cloud()
   
   wget https://github.com/kubeedge/kubeedge/releases/download/v${version}/checksum_kubeedge-v${version}-linux-${cloud_arch}.tar.gz.txt -P /etc/kubeedge
   chmod +x ./bin/keadm_${cloud_arch}
-  ./bin/keadm_${cloud_arch} init --advertise-address=$fip --kubeedge-version=${version}
+  ./bin/keadm_${cloud_arch} init --advertise-address=${cloud_ip} --kubeedge-version=${version}
   sleep 10
   echo "Please copy the token, and use it when executing kube-installer init-edge"
   echo $(./bin/keadm_${cloud_arch} gettoken)
@@ -652,6 +652,7 @@ function init-cloud()
 function init-edge()
 {
   token=$1
+  echo ${token}
   # wget https://github.com/chanyaNG97/kube-installer/blob/master/bin/keadm_{edge_arch} -P /etc/kubeedge
   
   wget https://github.com/kubeedge/kubeedge/releases/download/v${version}/kubeedge-v${version}-linux-${edge_arch}.tar.gz -P /etc/kubeedge/
@@ -659,7 +660,7 @@ function init-edge()
   wget https://github.com/kubeedge/kubeedge/releases/download/v${version}/checksum_kubeedge-v${version}-linux-${edge_arch}.tar.gz.txt -P /etc/kubeedge
 
 
-  ./bin/keadm_${edge_arch} join --cloudcore-ipport=$fip:10000 --token=$token
+  ./bin/keadm_${edge_arch} join --cloudcore-ipport=${cloud_ip}:10000 --token=$token
 }
 
 ###########################################################
