@@ -35,7 +35,12 @@ kube_crds="crds"                          # crds
 
 #### VirtualMachine ####
 kube_virt_type="kvm"                      # kvm or kata
-kube_virt_version="train"                
+kube_virt_version="train"  
+
+#### KubeEdge ####
+version="1.9.0"
+cloud_arch = "amd64"
+edge_arch = "arm64"
 
 
 ########    Advanced setting       ########
@@ -604,6 +609,60 @@ function reset-frontend()
   kubectl delete svc kube-frontend -n kube-system
 }
 
+###########################################################
+##
+##  init-cloud
+##
+##########################################################
+
+function init-cloud()
+{
+
+  wget "/bin -P /etc/kubeedge"
+  
+  wget "https://github.com/kubeedge/kubeedge/releases/download/v${version}/kubeedge-${version}-linux-${cloud_arch}.tar.gz -P /etc/kubeedge/"
+  
+  wget "https://github.com/kubeedge/kubeedge/releases/download/v${version}/checksum_kubeedge-${version}-linux-${cloud_arch}.tar.gz.txt -P /etc/kubeedge"
+
+  /etc/kubeedge/keadm_${arch} init --advertise-address=$fip --kubeedge-version=${version}
+
+  echo $("/etc/kubeedge/keadm_${arch} gettoken")
+  # # [optional] just consider performance
+  # swapoff -a      
+  
+  # # [required] prerequires
+  # systemctl restart kubelet
+  # echo "1" > /proc/sys/net/bridge/bridge-nf-call-iptables
+  # echo "1" > /proc/sys/net/ipv4/ip_forward
+
+  # # [required], see https://kubernetes.io/docs/reference/config-api/kubeadm-config.v1beta2/
+  # kubeadm init --config /etc/kubernetes/kubeadm.yaml
+  # rm -rf $HOME/.kube
+  # mkdir -p $HOME/.kube
+  # sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  # sudo chown $(id -u):$(id -g) $HOME/.kube/config
+  # iptables -P FORWARD ACCEPT
+}
+
+
+###########################################################
+##
+##  init-edge
+##
+##########################################################
+
+function init-edge()
+{
+  token=$1
+  wget "/bin -P /etc/kubeedge"
+  
+  wget "https://github.com/kubeedge/kubeedge/releases/download/v${version}/kubeedge-${version}-linux-${edge_arch}.tar.gz -P /etc/kubeedge/"
+  
+  wget "https://github.com/kubeedge/kubeedge/releases/download/v${version}/checksum_kubeedge-${version}-linux-${edge_arch}.tar.gz.txt -P /etc/kubeedge"
+
+
+  /etc/kubeedge/keadm_${arch} join --cloudcore-ipport=$fip:10000 --token=$token
+}
 
 ###########################################################
 ##
@@ -688,3 +747,5 @@ case $1 in
   help
   ;;
 esac
+
+
