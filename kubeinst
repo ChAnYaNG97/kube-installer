@@ -39,8 +39,8 @@ kube_virt_version="train"
 
 #### KubeEdge ####
 version="1.9.0"
-cloud_arch = "amd64"
-edge_arch = "arm64"
+cloud_arch="amd64"
+edge_arch="arm64"
 
 
 ########    Advanced setting       ########
@@ -617,14 +617,13 @@ function reset-frontend()
 
 function init-cloud()
 {
-
-  wget https://github.com/chanyaNG97/kube-installer/blob/master/bin/keadm_amd64 -P /etc/kubeedge
+  # wget https://github.com/chanyaNG97/kube-installer/blob/master/bin/keadm_${cloud_arch} -P /etc/kubeedge
   
-  wget https://github.com/kubeedge/kubeedge/releases/download/v${version}/kubeedge-${version}-linux-${cloud_arch}.tar.gz -P /etc/kubeedge/
+  wget https://github.com/kubeedge/kubeedge/releases/download/v${version}/kubeedge-v${version}-linux-${cloud_arch}.tar.gz -P /etc/kubeedge/
   
-  wget https://github.com/kubeedge/kubeedge/releases/download/v${version}/checksum_kubeedge-${version}-linux-${cloud_arch}.tar.gz.txt -P /etc/kubeedge
+  wget https://github.com/kubeedge/kubeedge/releases/download/v${version}/checksum_kubeedge-v${version}-linux-${cloud_arch}.tar.gz.txt -P /etc/kubeedge
 
-  /etc/kubeedge/keadm_${cloud_arch} init --advertise-address=$fip --kubeedge-version=${version}
+  ./bin/keadm_${cloud_arch} init --advertise-address=$fip --kubeedge-version=${version}
 
   echo $(/etc/kubeedge/keadm_${cloud_arch} gettoken)
   # # [optional] just consider performance
@@ -654,14 +653,14 @@ function init-cloud()
 function init-edge()
 {
   token=$1
-  wget https://github.com/chanyaNG97/kube-installer/blob/master/bin/keadm_arm64 -P /etc/kubeedge
+  # wget https://github.com/chanyaNG97/kube-installer/blob/master/bin/keadm_{edge_arch} -P /etc/kubeedge
   
-  wget https://github.com/kubeedge/kubeedge/releases/download/v${version}/kubeedge-${version}-linux-${edge_arch}.tar.gz -P /etc/kubeedge/
+  wget https://github.com/kubeedge/kubeedge/releases/download/v${version}/kubeedge-v${version}-linux-${edge_arch}.tar.gz -P /etc/kubeedge/
   
-  wget https://github.com/kubeedge/kubeedge/releases/download/v${version}/checksum_kubeedge-${version}-linux-${edge_arch}.tar.gz.txt -P /etc/kubeedge
+  wget https://github.com/kubeedge/kubeedge/releases/download/v${version}/checksum_kubeedge-v${version}-linux-${edge_arch}.tar.gz.txt -P /etc/kubeedge
 
 
-  /etc/kubeedge/keadm_${edge_arch} join --cloudcore-ipport=$fip:10000 --token=$token
+  ./bin/keadm_${edge_arch} join --cloudcore-ipport=$fip:10000 --token=$token
 }
 
 ###########################################################
@@ -739,6 +738,12 @@ case $1 in
     ;;
   "reset-frontend")
     reset-frontend $*
+    ;;
+  "init-cloud")
+    init-cloud $*
+    ;;
+  "init-edge")
+    init-edge $*
     ;;
   "--help")
     help
