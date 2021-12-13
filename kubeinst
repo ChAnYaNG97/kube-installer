@@ -618,15 +618,15 @@ function reset-frontend()
 function init-cloud()
 {
 
-  wget "/bin -P /etc/kubeedge"
+  wget https://github.com/chanyaNG97/kube-installer/blob/master/bin/keadm_amd64 -P /etc/kubeedge
   
-  wget "https://github.com/kubeedge/kubeedge/releases/download/v${version}/kubeedge-${version}-linux-${cloud_arch}.tar.gz -P /etc/kubeedge/"
+  wget https://github.com/kubeedge/kubeedge/releases/download/v${version}/kubeedge-${version}-linux-${cloud_arch}.tar.gz -P /etc/kubeedge/
   
-  wget "https://github.com/kubeedge/kubeedge/releases/download/v${version}/checksum_kubeedge-${version}-linux-${cloud_arch}.tar.gz.txt -P /etc/kubeedge"
+  wget https://github.com/kubeedge/kubeedge/releases/download/v${version}/checksum_kubeedge-${version}-linux-${cloud_arch}.tar.gz.txt -P /etc/kubeedge
 
-  /etc/kubeedge/keadm_${arch} init --advertise-address=$fip --kubeedge-version=${version}
+  /etc/kubeedge/keadm_${cloud_arch} init --advertise-address=$fip --kubeedge-version=${version}
 
-  echo $("/etc/kubeedge/keadm_${arch} gettoken")
+  echo $(/etc/kubeedge/keadm_${cloud_arch} gettoken)
   # # [optional] just consider performance
   # swapoff -a      
   
@@ -654,14 +654,14 @@ function init-cloud()
 function init-edge()
 {
   token=$1
-  wget "/bin -P /etc/kubeedge"
+  wget https://github.com/chanyaNG97/kube-installer/blob/master/bin/keadm_arm64 -P /etc/kubeedge
   
-  wget "https://github.com/kubeedge/kubeedge/releases/download/v${version}/kubeedge-${version}-linux-${edge_arch}.tar.gz -P /etc/kubeedge/"
+  wget https://github.com/kubeedge/kubeedge/releases/download/v${version}/kubeedge-${version}-linux-${edge_arch}.tar.gz -P /etc/kubeedge/
   
-  wget "https://github.com/kubeedge/kubeedge/releases/download/v${version}/checksum_kubeedge-${version}-linux-${edge_arch}.tar.gz.txt -P /etc/kubeedge"
+  wget https://github.com/kubeedge/kubeedge/releases/download/v${version}/checksum_kubeedge-${version}-linux-${edge_arch}.tar.gz.txt -P /etc/kubeedge
 
 
-  /etc/kubeedge/keadm_${arch} join --cloudcore-ipport=$fip:10000 --token=$token
+  /etc/kubeedge/keadm_${edge_arch} join --cloudcore-ipport=$fip:10000 --token=$token
 }
 
 ###########################################################
