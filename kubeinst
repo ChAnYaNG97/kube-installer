@@ -658,7 +658,7 @@ function init-edge()
   wget https://github.com/kubeedge/kubeedge/releases/download/v${version}/kubeedge-v${version}-linux-${edge_arch}.tar.gz -P /etc/kubeedge/
   
   wget https://github.com/kubeedge/kubeedge/releases/download/v${version}/checksum_kubeedge-v${version}-linux-${edge_arch}.tar.gz.txt -P /etc/kubeedge
-
+  chmod +x ./bin/keadm_${edge_arch}
 
   ./bin/keadm_${edge_arch} join --cloudcore-ipport=${cloud_ip}:10000 --token=$token
 }
