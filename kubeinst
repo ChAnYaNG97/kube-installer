@@ -20,7 +20,7 @@ VERSION="2.0"
 
 ####   Container  #### 
 kube_pod_subnet="10.244.0.0/16"
-kube_version="1.22.3"
+kube_version="1.21.3"
 kube_image_server="registry.cn-hangzhou.aliyuncs.com/google_containers"
 #kube_runtime="containerd"                # containerd or docker
 #kube_runtime_version="1.4.9"             # containerd 
@@ -651,7 +651,7 @@ function init-cloud()
 
 function init-edge()
 {
-  token=$1
+  token=$2
   echo ${token}
   # wget https://github.com/chanyaNG97/kube-installer/blob/master/bin/keadm_{edge_arch} -P /etc/kubeedge
   
